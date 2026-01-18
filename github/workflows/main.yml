@@ -1,0 +1,50 @@
+let rawText = $input.item.json.text;
+
+// تنظيف الكود
+rawText = rawText.trim().replace(/^```json/, "").replace(/```$/, "");
+
+try {
+  const parsedData = JSON.parse(rawText);
+  const items = [];
+
+  // 1. معالجة الملفات
+  const actions = parsedData.actions || [];
+  
+  for (const action of actions) {
+    if (action.type === "file") {
+      items.push({
+        json: { 
+          actionType: "file",
+          path: action.path,
+          fileName: action.path.split('/').pop() 
+        },
+        binary: {
+          data: {
+            data: Buffer.from(action.content, "utf8").toString("base64"),
+            mimeType: "text/plain",
+            fileName: action.path
+          }
+        }
+      });
+    } else if (action.type === "command") {
+      // 2. معالجة الأوامر (حفظها في ملف سجل للمراجعة)
+      items.push({
+        json: { 
+          actionType: "command",
+          path: "setup_commands.sh",
+          content: action.command
+        },
+        binary: {
+          data: {
+            data: Buffer.from(action.command, "utf8").toString("base64"),
+            mimeType: "text/plain",
+            fileName: "setup_commands.sh"
+          }
+        }
+      });
+    }
+  }
+  return items;
+} catch (error) {
+  return [{ json: { error: "Failed to parse AI output", details: error.message } }];
+}
