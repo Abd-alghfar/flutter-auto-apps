@@ -1,18 +1,39 @@
 name: Flutter Web Deploy
+
 on:
   push:
     branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter config --enable-web
-      - run: flutter pub get
-      - run: flutter build web --release --base-href /{{ github.event.repository.name }}/
+
+      - name: Enable Web and Initialize Project
+        run: |
+          # تفعيل دعم الويب
+          flutter config --enable-web
+          
+          # التحقق مما إذا كان ملف pubspec.yaml موجوداً (رفع من n8n)
+          # إذا لم يكن هناك مشروع كامل، نقوم بإنشائه حول الملفات المرفوعة
+          if [ ! -d "web" ]; then
+            echo "Web directory not found. Initializing Flutter project..."
+            flutter create . --platforms web --force
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Web
+        run: flutter build web --release --base-href /${{ github.event.repository.name }}/
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
