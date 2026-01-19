@@ -2,11 +2,14 @@ name: Flutter Web Deploy
 
 on:
   push:
-    branches: [ main ]
+    # السماح بالبناء عند الرفع على أي فرع جديد (اسم المشروع)
+    branches:
+      - '**'
 
-# 🔥 هذا الجزء ضروري جداً لمنح البوت صلاحية الكتابة والنشر
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -23,12 +26,9 @@ jobs:
       - name: Enable Web and Initialize Project
         run: |
           flutter config --enable-web
-          # إنشاء هيكل المشروع حول الملفات المرفوعة إذا كان مفقوداً
           if [ ! -f "pubspec.yaml" ]; then
-            echo "No project found. Creating new Flutter project..."
             flutter create . --platforms web
           else
-            # إذا كان موجوداً، نتأكد من وجود مجلد الويب
             if [ ! -d "web" ]; then
               flutter create . --platforms web
             fi
@@ -38,10 +38,15 @@ jobs:
         run: flutter pub get
 
       - name: Build Web
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/
+        # التعديل المطلوب: ضبط المسار ليكون /اسم-المستودع/اسم-المشروع/
+        run: flutter build web --release --base-href /${{ github.event.repository.name }}/${{ github.ref_name }}/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
+          # السر هنا: وضع ملفات الويب داخل مجلد باسم الفرع الحالي
+          destination_dir: ${{ github.ref_name }}
+          # الحفاظ على المشاريع القديمة وعدم مسحها
+          keep_files: true
