@@ -18,14 +18,11 @@ jobs:
 
       - name: Enable Web and Initialize Project
         run: |
-          # تفعيل دعم الويب
           flutter config --enable-web
-          
-          # التحقق مما إذا كان ملف pubspec.yaml موجوداً (رفع من n8n)
-          # إذا لم يكن هناك مشروع كامل، نقوم بإنشائه حول الملفات المرفوعة
+          # إنشاء هيكل المشروع حول الملفات المرفوعة إذا كان مجلد web مفقوداً
           if [ ! -d "web" ]; then
-            echo "Web directory not found. Initializing Flutter project..."
-            flutter create . --platforms web --force
+            echo "Initializing Flutter project..."
+            flutter create .
           fi
 
       - name: Install dependencies
