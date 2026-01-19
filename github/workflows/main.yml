@@ -1,6 +1,6 @@
 let rawText = $input.item.json.text;
 
-// تنظيف الكود
+//تنظيف الكود
 rawText = rawText.trim().replace(/^```json/, "").replace(/```$/, "");
 
 try {
