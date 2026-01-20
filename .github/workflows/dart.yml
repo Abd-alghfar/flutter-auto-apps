@@ -2,7 +2,7 @@ name: Flutter Web Deploy
 
 on:
   push:
-    # السماح بالبناء عند الرفع على أي فرع جديد (اسم المشروع)
+    # سيتم تفعيل البناء عند الرفع على أي فرع (مشروع) جديد
     branches:
       - '**'
 
@@ -26,19 +26,17 @@ jobs:
       - name: Enable Web and Initialize Project
         run: |
           flutter config --enable-web
-          if [ ! -f "pubspec.yaml" ]; then
-            flutter create . --platforms web
-          else
-            if [ ! -d "web" ]; then
-              flutter create . --platforms web
-            fi
+          # الحل النهائي: إجبار فلاتر على استخدام اسم حزمة صالح (app) 
+          # هذا يمنع الخطأ الناتج عن وجود شرطات (-) في اسم المستودع الرئيسي
+          if [ ! -d "web" ]; then
+            flutter create . --project-name=app --platforms web
           fi
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build Web
-        # التعديل المطلوب: ضبط المسار ليكون /اسم-المستودع/اسم-المشروع/
+        # ضبط مسار المعاينة ليكون متوافقاً مع المجلد الفرعي في GitHub Pages
         run: flutter build web --release --base-href /${{ github.event.repository.name }}/${{ github.ref_name }}/
 
       - name: Deploy to GitHub Pages
@@ -46,7 +44,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
-          # السر هنا: وضع ملفات الويب داخل مجلد باسم الفرع الحالي
+          # رفع ملفات الويب الناتجة إلى مجلد يحمل اسم الفرع (المشروع) الحالي
           destination_dir: ${{ github.ref_name }}
-          # الحفاظ على المشاريع القديمة وعدم مسحها
+          # الحفاظ على المشاريع (الفروع) الأخرى المنشورة مسبقاً
           keep_files: true
