@@ -13,7 +13,7 @@ void main() => runApp(
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @ksen@override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
