@@ -5,7 +5,7 @@ import 'color_provider.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @ksen@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.watch<ColorProvider>().backgroundColor,
