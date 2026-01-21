@@ -2,6 +2,10 @@ name: color_changer_app
 description: A Flutter app that changes background color
 version: 1.0.0+1
 
+# هذا القسم هو ما كان ينقصك ويسبب الخطأ في GitHub Actions
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
