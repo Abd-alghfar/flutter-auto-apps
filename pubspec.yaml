@@ -1,0 +1,11 @@
+name: color_changer_app
+description: A Flutter app that changes background color
+version: 1.0.0+1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.5
+
+flutter:
+  uses-material-design: true
