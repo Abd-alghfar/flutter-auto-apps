@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'color_provider.dart';
+import 'home_screen.dart';
+
+void main() => runApp(
+  ChangeNotifierProvider(
+    create: (context) => ColorProvider(),
+    child: const MyApp(),
+  ),
+);
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @ksen@override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true),
+      home: const HomeScreen(),
+    );
+  }
+}
